@@ -1,0 +1,56 @@
+import pandas as pd
+import numpy as np
+import json
+
+
+def get_data():
+    df = pd.concat(pd.read_excel(r'C:\Users\vigsa\Downloads\Astika_Symvanta_2021.xls', sheet_name=None), ignore_index=True)
+    df['database'] = 'FireServiceGR'
+    df.drop(columns=['Υπηρεσία', 'Νομός', 'Α/Α Εγγραφής', 'Είδος Συμβάντος', 'Ώρα Έναρξης', 'Ώρα Κατάσβεσης', 'Δήμος', 'Χωριό'], inplace=True)
+    df.rename(columns={'Ημερ. Έναρξης Συμβάντος': 'startDate'}, inplace=True)
+    df.rename(columns={'Χαρακτηρισμός Συμβάντος': 'disasterDescription'}, inplace=True)
+    df.rename(columns={'Σύνολο Πυρ. Οχημάτωνς': 'numberofvehicles'}, inplace=True)
+    df.rename(columns={'Τραυματίες': 'injuredpeoplenumber'}, inplace=True)
+    df.rename(columns={'Θάνατοι': 'casualties'}, inplace=True)
+    df.drop(columns=['Περιγραφή Χώρου', 'Αριθμός εμπλεκομένων   ανά τύπο ',], inplace=True)
+    df.drop(columns=['Τύπος Ατυχήματος', 'Εγκαύματα',], inplace=True)
+    df.rename(columns={'Σύνολο Πυρ. Δυνάμεων (σε άνδρες και γυναίκες)': 'manpowerForce'}, inplace=True)
+    df.rename(columns={'Σύνολο Πυροσβ. Πλοιαρίων': 'vehiclesForce'}, inplace=True)
+    df.rename(columns={'Σύνολο Πυρ. Οχημάτων': 'carForce'}, inplace=True)   
+    df.rename(columns={'disasterDescription': 'disasterSize'}, inplace=True)
+    df['disasterSize'] = df['disasterSize'].replace(['nan'], 'small' )
+    df['disasterSize'] = df['disasterSize'].replace(['ΨΕΥΔΗΣ ΑΝΑΓΓΕΛΙΑ'], 'ΜΙΚΡΗ' )
+    df['disasterSize'] = df['disasterSize'].replace(['ΔΙΑΣΩΣΕΙΣ ΖΩΩΝ'], 'ΜΙΚΡΗ' )
+    df['disasterSize'] = df['disasterSize'].replace(['ΑΝΤΛΗΣΗ ΝΕΡΟΥ'], 'ΜΙΚΡΗ' )
+    df['disasterSize'] = df['disasterSize'].replace(['ΑΠΕΛΕΥΘΕΡΩΣΗ ΑΠΟ ΑΝΕΛΚΥΣΤΗΡΑ'], 'ΜΙΚΡΗ' )
+    df['disasterSize'] = df['disasterSize'].replace(['ΠΡΟΛΗΠΤΙΚΗ ΠΥΡΟΠΡΟΣΤΑΣΙΑ'], 'ΜΙΚΡΗ' )
+    df['disasterSize'] = df['disasterSize'].replace(['ΔΙΑΦΥΓΗ ΕΠΙΚΙΝΔΥΝΩΝ ΟΥΣΙΩΝ'], 'ΜΕΣΑΙΑ' )
+    df['disasterSize'] = df['disasterSize'].replace(['ΜΕΤΑΦΟΡΑ ΑΣΘΕΝΩΝ'], 'ΜΕΣΑΙΑ' )
+    df['disasterSize'] = df['disasterSize'].replace(['ΑΦΑΙΡΕΣΗ ΑΝΤΙΚΕΙΜΕΝΩΝ - ΚΑΤΑΡΡΕΥΣΕΙΣ'], 'ΜΕΣΑΙΑ' )
+    df['disasterSize'] = df['disasterSize'].replace(['ΤΡΟΧΑΙΑ ΑΤΥΧΗΜΑΤΑ'], 'ΜΕΣΑΙΑ' )
+    df['disasterSize'] = df['disasterSize'].replace(['ΡΙΨΗ ΠΡΙΟΝΙΔΙΟΥ'], 'ΜΙΚΡΗ' )
+    df['disasterSize'] = df['disasterSize'].replace(['ΜΕΤΑΦΟΡΑ ΑΤΟΜΩΝ'], 'ΜΙΚΡΗ' )
+    df['disasterSize'] = df['disasterSize'].replace(['ΠΛΥΣΙΜΟ ΟΔΟΥ'], 'ΜΙΚΡΗ' )
+    df['disasterSize'] = df['disasterSize'].replace(['ΑΝΟΙΓΜΑ ΘΥΡΩΝ'], 'ΜΙΚΡΗ' )
+    df['disasterSize'] = df['disasterSize'].replace(['ΑΝΕΥΡΕΣΗ ΑΓΝΟΟΥΜΕΝΟΥ'], 'ΜΕΓΑΛΗ' )
+    df['disasterSize'] = df['disasterSize'].replace(['ΜΕΤΑΦΟΡΑ ΑΣΘΕΝΩΝ'], 'ΜΕΣΑΙΑ' )
+    df['disasterSize'] = df['disasterSize'].replace(['ΑΠΕΛΕΥΘΕΡΩΣΗ ΟΔΟΣΤΡΩΜΑΤΟΣ'], 'ΜΕΣΑΙΑ' )
+    df['disasterSize'] = df['disasterSize'].replace(['ΠΛΥΣΙΜΟ ΔΑΠΕΔΟΥ'], 'ΜΙΚΡΗ') 
+    df['disasterSize'] = df['disasterSize'].replace(['ΠΛΗΡΩΣΗ ΔΕΞΑΜΕΝΩΝ'], 'ΜΙΚΡΗ')
+    df['disasterSize'] = df['disasterSize'].replace(['ΕΚΧΙΟΝΙΣΜΟΣ'], 'ΜΙΚΡΗ' )   
+    df['disasterSize'] = df['disasterSize'].replace(['ΠΛΥΣΙΜΟ ΣΤΕΓΗΣ'], 'ΜΙΚΡΗ' )                                              
+    df['disasterSize'] = df['disasterSize'].replace(['ΔΙΑΣΩΣΕΙΣ ΑΝΘΡΩΠΩΝ'], 'ΜΕΓΑΛΗ')
+    df['disasterSize'] = df['disasterSize'].replace(['ΕΡΓΑΤΙΚΑ ΑΤΥΧΗΜΑΤΑ'], 'ΜΕΓΑΛΗ')
+    df['disasterSize'] = df['disasterSize'].replace(['ΑΛΛΕΣ ΠΕΡΙΠΤΩΣΕΙΣ'], 'ΜΕΣΑΙΑ')
+    df['disasterSize'] = df['disasterSize'].replace(['-'], 'ΜΙΚΡΗ')
+    df['disasterSize'] = df['disasterSize'].replace(['nan'], 'ΜΙΚΡΗ' )
+    df.rename(columns={'Disasters': 'disasters'}, inplace=True)
+    df.drop(columns=['Ημερ. Κατάσβεσης'], inplace=True)
+    return df 
+
+def return_json():
+    df = get_data()
+    to_return = df.to_json(orient='records')
+    to_return = json.loads(to_return)
+    return to_return
+
